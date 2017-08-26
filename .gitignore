@@ -1,2 +1,4 @@
-test.py
-response example.json
+build/
+dist/
+__pycache__/
+*.spec

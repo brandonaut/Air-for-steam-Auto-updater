@@ -88,7 +88,7 @@ def GetSteamDir():
             steam_dir = '''C:\Program Files (x86)\Steam'''
 
     if steam_dir:
-        print(f'Found Steam at {steam_dir}')
+        print('Found Steam at {}'.format(steam_dir))
     else:
         print('Could not detect Steam installation automatically.')
         while not steam_dir:
@@ -110,11 +110,11 @@ def main():
     LOG_PATH = os.path.join(SKINS_DIR, 'auto-updater log.txt')
 
     installed_version = GetInstalledVersion(LOG_PATH)
-    print(f'Local version:  {installed_version}')
+    print('Local version:  {}'.format(installed_version))
 
     latest_release_info = GetLatestReleaseInfo()
     latest_release_version = latest_release_info.json()['tag_name']
-    print(f'Latest release: {latest_release_version}')
+    print('Latest release: {}'.format(latest_release_version))
 
     if installed_version == latest_release_version:
         print('Air for Steam is already up-to-date')
