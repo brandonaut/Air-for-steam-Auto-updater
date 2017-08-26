@@ -5,10 +5,11 @@ Air-for-Steam Updater makes it easier to download and install the latest Air-for
 NOTE: This has only been tested on Windows 10, but it should work for OSX and Linux as well.
 
 ## Usage:
-Set your Steam path in air-updater.ini and run `air-updater.exe`.
-
-## Config:
 Place your Air-for-Steam configuration file ('config.ini') in the root of your Steam skins folder. air-updater will copy this into the new Air-for-Steam version after each update.
+
+Configure your settings in air-updater.ini and then run `air-updater.exe`.
+
+### Settings
 
 air-updater also has its own configuration file, air-updater.ini (in the same folder as air-updater), which contains the following settings:
   - Steam path: This is the path to your Steam installation (usually 'C:\Program Files (x86)\Steam' on Windows)
@@ -19,5 +20,5 @@ air-updater also has its own configuration file, air-updater.ini (in the same fo
   - Python 3.5
   - Dependencies: requests, pyinstaller
 
-##License
+## License
 The license is the CC 3.0 NZ attribution-noncomercial license. A human readable version is available here: https://creativecommons.org/licenses/by-nc/3.0/nz/.
