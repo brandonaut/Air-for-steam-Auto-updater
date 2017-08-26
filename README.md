@@ -1,12 +1,18 @@
-# Air for steam Auto-updater
+# Air-for-Steam Updater
+
+Air-for-Steam Updater makes it easier to download and install the latest Air-for-Steam skin, without losing your configuration settings.
+
+NOTE: This has only been tested on Windows 10, but it should work for OSX and Linux as well.
 
 ## Usage:
-Run the script using python 3.5.x from any location, change the directory at the top of the file to your steam directory. It should work on Windows and Linux & (Maybe,) OSX. However I can't test on anything other that windows atm so get back to me if you have any problems.
-To force the updater to run again to regonise config changes delete the logfile.txt that is created in the skins directory. This file contains the tag of the latest release and deleting it will make it think there's a new release.
+Run `air-updater` without any arguments. It will try to determine the path to your Steam installation. If it can't find it, it will prompt you for the root of your Steam directory (Usually 'C:\Program Files (x86)\Steam' on Windows). air-updater will save this in air-updater.ini, so you should only have to set it the first time you run it.
 
 ## Config:
-Copy your config to the steam skins directory and make sure it's named 'config.ini'
-Create a file called 'config.txt' in the skins directory and put 'dark' on the first line if you want the dark skin. Put 'square' on the second line if you want square avatars. See above to get it to apply config changes
+Place your Air-for-Steam configuration file ('config.ini') in the root of your Steam skins folder. air-updater will copy this into the new Air-for-Steam version after each update.
+
+air-updater also has its own configuration file, air-updater.ini (created after the first run in the same folder as air-updater). You can set the following settings in air-updater.ini:
+  - Dark mode: Set to 'True' to enable dark mode after performing the update
+  - Square avatars: Set to 'True' to enable square avatars after performing the update
 
 ## To build
   - Python 3.5

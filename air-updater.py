@@ -87,7 +87,7 @@ def GetSteamDir():
 
 
 def main():
-    # The air-updater.ini should reside in the same location as auto-updater.py
+    # The air-updater.ini should reside in the same location as air-updater.py
     AIR_UPDATER_PATH = os.path.dirname(os.path.realpath(sys.argv[0]))
     AIR_CONFIG_PATH = os.path.join(AIR_UPDATER_PATH, 'air-updater.ini')
     air_updater_config = configparser.ConfigParser()
