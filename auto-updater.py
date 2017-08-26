@@ -81,8 +81,31 @@ def UpdateLog(log_path, version):
         file.write(version)
 
 
+def GetSteamDir():
+    steam_dir = None
+    if os.name == 'nt':
+        if os.path.isdir('''C:\Program Files (x86)\Steam'''):
+            steam_dir = '''C:\Program Files (x86)\Steam'''
+
+    if steam_dir:
+        print(f'Found Steam at {steam_dir}')
+    else:
+        print('Could not detect Steam installation automatically.')
+        while not steam_dir:
+            response = input('Please enter your Steam installation directory or (A)bort: ')
+            if response.lower() == 'a':
+                sys.exit(0)
+            else:
+                if os.path.isdir(response):
+                    steam_dir = response
+                else:
+                    print('Invalid location')
+
+    return steam_dir
+
+
 def main():
-    STEAM_DIR = 'C:\Program Files (x86)\Steam'  # TODO: Find steam installation location
+    STEAM_DIR = GetSteamDir()
     SKINS_DIR = os.path.join(STEAM_DIR, 'skins')
     LOG_PATH = os.path.join(SKINS_DIR, 'auto-updater log.txt')
 
