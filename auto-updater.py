@@ -1,3 +1,4 @@
+import configparser
 import requests
 import os
 import sys
@@ -18,14 +19,6 @@ def copytree(src, dst, symlinks=False, ignore=None):
         else:
             if not os.path.exists(d) or os.stat(s).st_mtime - os.stat(d).st_mtime > 1:
                 shutil.copy2(s, d)
-
-
-def GetInstalledVersion(log_path):
-    if os.path.isfile(log_path):
-        with open(log_path, 'r', encoding='utf-8') as file:
-            installed_version = file.read().strip()
-
-    return installed_version
 
 
 def GetLatestReleaseInfo():
@@ -51,9 +44,8 @@ def DownloadRelease(release_info, skins_dir):
     os.rename(os.path.join(skins_dir, skin.filename[:-1]), LOCAL_RELEASE_PATH)
 
 
-def CopyConfig(skins_dir):
+def UpdateSkinConfig(skins_dir, air_updater_config):
     SKIN_CONFIG_PATH = os.path.join(skins_dir, 'config.ini')
-    CONFIG_PATH = os.path.join(skins_dir, 'config.txt')
     AIR_FOLDER_PATH = os.path.join(skins_dir, _AIR_FOLDER_NAME)
 
     # Copy config file
@@ -63,22 +55,12 @@ def CopyConfig(skins_dir):
         print('No config file found (It should be named config.ini)')
 
     # Copy extras
-    if os.path.isfile(CONFIG_PATH):
-        with open(CONFIG_PATH, 'r') as file:
-            for line in file:
-                if line.strip() == 'dark':
-                    copytree(os.path.join(AIR_FOLDER_PATH, '+Extras', 'Themes', 'Dark'), AIR_FOLDER_PATH)
-                    print('Dark theme applied')
-                if line.strip() == 'square':
-                    copytree(os.path.join(AIR_FOLDER_PATH, '+Extras', 'Square Avatars'), os.path.join(AIR_FOLDER_PATH, 'Graphics'))
-                    print('Square avatars applied')
-    else:
-        print('No extras applied')
-
-
-def UpdateLog(log_path, version):
-    with open(log_path, 'w', encoding='utf-8') as file:
-        file.write(version)
+    if air_updater_config['User Settings']['Dark mode'] == 'True':
+        copytree(os.path.join(AIR_FOLDER_PATH, '+Extras', 'Themes', 'Dark'), AIR_FOLDER_PATH)
+        print('Dark theme applied')
+    if air_updater_config['User Settings']['Square avatars'] == 'True':
+        copytree(os.path.join(AIR_FOLDER_PATH, '+Extras', 'Square Avatars'), os.path.join(AIR_FOLDER_PATH, 'Graphics'))
+        print('Square avatars applied')
 
 
 def GetSteamDir():
@@ -105,11 +87,24 @@ def GetSteamDir():
 
 
 def main():
-    STEAM_DIR = GetSteamDir()
-    SKINS_DIR = os.path.join(STEAM_DIR, 'skins')
-    LOG_PATH = os.path.join(SKINS_DIR, 'auto-updater log.txt')
+    # The air-updater.ini should reside in the same location as auto-updater.py
+    AIR_UPDATER_PATH = os.path.dirname(os.path.realpath(sys.argv[0]))
+    AIR_CONFIG_PATH = os.path.join(AIR_UPDATER_PATH, 'air-updater.ini')
+    air_updater_config = configparser.ConfigParser()
 
-    installed_version = GetInstalledVersion(LOG_PATH)
+    if os.path.isfile(AIR_CONFIG_PATH):
+        air_updater_config.read(AIR_CONFIG_PATH)
+    else:
+        air_updater_config['Global'] = {'Air-for-Steam version installed': 'unknown'}
+        air_updater_config['User Settings'] = {
+            'Steam path': GetSteamDir(),
+            'Dark mode': 'False',
+            'Square avatars': 'False',
+            }
+
+    SKINS_DIR = os.path.join(air_updater_config['User Settings']['Steam path'], 'skins')
+
+    installed_version = air_updater_config['Global']['Air-for-Steam version installed']
     print('Local version:  {}'.format(installed_version))
 
     latest_release_info = GetLatestReleaseInfo()
@@ -123,10 +118,16 @@ def main():
         DownloadRelease(latest_release_info, SKINS_DIR)
 
         print('Applying configuration...')
-        CopyConfig(SKINS_DIR)
+        UpdateSkinConfig(SKINS_DIR, air_updater_config)
 
-        UpdateLog(LOG_PATH, latest_release_version)
+        air_updater_config['Global']['Air-for-Steam version installed'] = latest_release_version
+
+        with open(AIR_CONFIG_PATH, 'w', encoding='utf-8') as file:
+            air_updater_config.write(file)
+
         print('Updated successfully. Steam must be restarted for the changes to take effect.')
+
+    input('Press any key to continue...')
 
 
 if __name__ == '__main__':
